@@ -1,0 +1,3 @@
+First create folder `masif_features` on the same level as `gsmformer-ppi`, then inside create folders `raw` and `processed` put all the pdb files (files `XXXX_L.pdb` and `XXXX_R.pdb`) to `raw` folder and run `python proteins_to_graphs.py` to get the features for all the proteins, then put masif descriptors to `masif_features/processed/masif_descriptors` folder. Also you need to put `trainset.npy`, `testset.npy` and `valset.npy` files with labels for all the interactions to `masif_features` folder
+
+Then create folder `logs` inside `gsmformer-ppi` and run `bash run_all_simple.sh` to train all the models.
