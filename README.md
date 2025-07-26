@@ -5,11 +5,14 @@ A deep learning approach for predicting protein-protein interactions (PPIs) that
 In order to replicate the results mentioned in the paper, we recommend to follow the next steps:
 
 1. Clone the repository
-    git clone https://github.com/yourusername/gsmformer-ppi.git
+    ```bash
+    git clone https://github.com/ChervovNikita/gsmformer-ppi.git
     cd gsmformer-ppi 
+    ```
 
 2. Dataset preparation
-    - Our model was trained using the [PINDER dataset](https://github.com/pinder-org/pinder) 
+    - Our model was trained using the [PINDER dataset](https://github.com/pinder-org/pinder)
+
     Install the PINDER's packages: 
     ```bash
     pip install pinder[all] 
@@ -24,9 +27,11 @@ In order to replicate the results mentioned in the paper, we recommend to follow
     ``` 
 
     - Generate the datasets
+
    For this step, we recommend to follow the step 3 from this repository [SpatialPPIv2](https://github.com/ohuelab/SpatialPPIv2/tree/main?tab=readme-ov-file#3-generate-dataset) 
 
    This step will generate the train, validation and test sets in CSV format. 
+
    This was the command that we used: 
    ```bash
    cd SpatialPPIv2
@@ -34,9 +39,12 @@ In order to replicate the results mentioned in the paper, we recommend to follow
    ``` 
 
 3. Generate the surface features
+
     In this work, we used the MaSIF preprocessing framework. The MaSIF algorithm takes 3D protein structures in PDB format as input. It generates a discretised molecular surface, excluding solvent surfaces. This molecular surface is decomposed into overlapping radial patches with a fixed geodesic radius, r = 12 Å. For each point in the mesh, MaSIF calculates and assigns a set of geometric and chemical features, called pre-computed features. MaSIF then embeds these pre-computed features into a numerical vector descriptor. This numerical vector descriptor is then used as input for the GSMFormer model.
 
-    We used the docker container of MaSIF to generate the surface features. You can download the container from [here](https://github.com/LPDI-EPFL/masif/tree/master?tab=readme-ov-file#Docker-container). For additional information about the installation of MaSIF, please check the [MaSIF repository](https://github.com/LPDI-EPFL/masif).
+    We used the docker container of MaSIF to generate the surface features. You can download the container from [here](https://github.com/LPDI-EPFL/masif/tree/master?tab=readme-ov-file#Docker-container). 
+    
+    For additional information about the installation of MaSIF, please check the [MaSIF repository](https://github.com/LPDI-EPFL/masif).
 
     Inside the Docker container, we used the following scripts:
 
@@ -50,20 +58,23 @@ In order to replicate the results mentioned in the paper, we recommend to follow
     This script will create the  descriptor files (straight and flipped) for each protein chain in the folder *processed/descriptors*.
     
 4. Graph construction 
+
      In this work, we constructed an amino-acid/residue interaction graph defined as G(V, E), using the 3D coordinates of atoms from PDB files. The nodes or vertices (v ∈ V) are amino acid residues, and the edges (e ∈ E) denote the proximity between residues, including hydrogen bonds,hydrophobic interactions, or spatial proximity associations. The proximity or interaction of two residues was contingent upon the Euclidean distance of any given pair of atoms (one from each residue) being less than the threshold value of 8 angstroms (Å). 
 
      Please, follow the next steps to generate the graphs: 
-     a. Create a folder called *masif_features* at the same level as the *gsmformer-ppi* model.
 
-     b. Inside this folder, you must create two directories called *raw* and *processsed*. In the folder *raw* place all the PDB files of your dataset. 
+     1. Create a folder called *masif_features* at the same level as the *gsmformer-ppi* model.
 
-     c. Run the script `proteins_to_graphs.py`
+     2. Inside this folder, you must create two directories called *raw* and *processsed*. In the folder *raw* place all the PDB files of your dataset. 
+
+     3. Run the script `proteins_to_graphs.py`
         ``` bash
         python protein_to_graphs.py
         ``` 
 5. Train the model
-    a. Put your dataset splits with labels (train, validation, test) in `.npy` format in the same folder *processed/descriptors*.
 
-    b. Create a folder called *logs* inside `gsmformer-ppi`.
+    1. Put your dataset splits with labels (train, validation, test) in `.npy` format in the same folder *processed/descriptors*.
 
-    c. Run `bash run_all_simple.sh` to train all the models.
+    2. Create a folder called *logs* inside `gsmformer-ppi`.
+
+    3. Run `bash run_all_simple.sh` to train all the models.
